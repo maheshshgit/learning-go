@@ -6,58 +6,92 @@ import (
 	"log"
 )
 
-type Truck struct {
-	id string
+type Truck interface {
+	LoadCargo() error
+	UnloadCargo() error
+}
+
+type NormalTruck struct {
+	id    string
+	cargo int
+}
+type ElectricTruck struct {
+	id           string
+	cargo        int
+	batteryLevel float64
 }
 
 var (
-	ErrTruckProcessingFailed = errors.New("Truck processing failed")
-	ErrNotImplemented        = errors.New("Not implemented")
-	ErrTruckNotFound         = errors.New("Truck not found")
-	ErrTruckNotFoundwithID   = func(id string) error {
-		return fmt.Errorf("Truck with ID %s not found", id)
-	}
+	ErrNotImplemented = errors.New("Not implemented")
+	ErrTruckNotFound  = errors.New("Truck not found")
 )
 
-// Load simulates loading the truck and returns nil for success.
-func (t Truck) LoadCargo() error {
-	// You can add logic here, for now just return nil to indicate success.
-	fmt.Printf("Loading Cargo ->%s\n", t.id)
-	if t.id == "Truck2" {
-		return ErrTruckNotFoundwithID(t.id)
-	}
+func (t *NormalTruck) LoadCargo() error {
+	t.cargo += 2
 	return nil
+}
 
+func (t *NormalTruck) UnloadCargo() error {
+	t.cargo -= 1
+	return nil
+}
+func (t *ElectricTruck) LoadCargo() error {
+	t.cargo += 2
+	t.batteryLevel -= 1
+	return nil
+}
+
+func (t *ElectricTruck) UnloadCargo() error {
+	t.cargo -= 1
+	t.batteryLevel -= 1
+	return nil
 }
 
 func processTruck(t Truck) error {
-	fmt.Printf("Processing Truck ->%s\n", t.id)
-	if err := t.LoadCargo(); err != nil {
-		return fmt.Errorf("Error loading cargo for truck %s: %w", t.id, err)
+	fmt.Printf("Processing truck :%+v\n", t)
+	err := t.LoadCargo()
+	if err != nil {
+		return fmt.Errorf("Error loading cargo : %w", err)
+	}
+
+	err = t.UnloadCargo()
+	if err != nil {
+		return fmt.Errorf("Error unloading cargo : %w", err)
 	}
 	return nil
 }
 
 func main() {
-	trucks := []Truck{
-		{id: "Truck1"},
-		{id: "Truck2"},
-		{id: "Truck3"},
+	nt := NormalTruck{id: "1", cargo: 10}
+	et := ElectricTruck{id: "2", cargo: 20, batteryLevel: 100}
+	err := processTruck(&nt)
+	if err != nil {
+		log.Printf("Error processing truck: %v", err)
 	}
-	for _, truck := range trucks {
-		fmt.Printf("Truck has arrived :->%s\n", truck.id)
-		err := processTruck(truck)
-		switch err {
-		case ErrTruckProcessingFailed:
-			log.Printf("Failed to process truck %s: %v\n", truck.id, err)
-		case ErrTruckNotFound:
-			log.Printf("Truck %s not found\n", truck.id)
-		case ErrNotImplemented:
-			log.Printf("Processing of truck %s is not implemented yet\n", truck.id)
-		default:
-			if err != nil {
-				log.Printf("Error processing truck %s: %v\n", truck.id, err)
-			}
-		}
+	err = processTruck(&et)
+	if err != nil {
+		log.Printf("Error processing truck: %v", err)
 	}
+	log.Printf("processing complete \n")
+	log.Printf("Normal Truck: %+v\n", nt)
+	log.Printf("Electric Truck: %+v\n", et)
+
+	//map of strings
+	person := make(map[string]any, 0)
+	person["name"] = "John"
+	person["age"] = 30
+
+	age, exists := person["age"]
+	if exists {
+		log.Printf("Age: %v\n", age)
+	} else {
+		log.Printf("Age not found\n")
+	}
+
+	width, exists := person["width"]
+	if !exists {
+		log.Fatalf("Width not found\n")
+	}
+	log.Printf("Width: %v\n", width)
+	log.Printf("Person: %+v\n", person)
 }
