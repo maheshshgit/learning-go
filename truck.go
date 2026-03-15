@@ -76,22 +76,22 @@ func main() {
 	log.Printf("Normal Truck: %+v\n", nt)
 	log.Printf("Electric Truck: %+v\n", et)
 
-	//map of strings
-	person := make(map[string]any, 0)
-	person["name"] = "John"
-	person["age"] = 30
+	// //map of strings
+	// person := make(map[string]any, 0)
+	// person["name"] = "John"
+	// person["age"] = 30
 
-	age, exists := person["age"]
-	if exists {
-		log.Printf("Age: %v\n", age)
-	} else {
-		log.Printf("Age not found\n")
-	}
+	// age, exists := person["age"]
+	// if exists {
+	// 	log.Printf("Age: %v\n", age)
+	// } else {
+	// 	log.Printf("Age not found\n")
+	// }
 
-	width, exists := person["width"]
-	if !exists {
-		log.Fatalf("Width not found\n")
-	}
-	log.Printf("Width: %v\n", width)
-	log.Printf("Person: %+v\n", person)
+	// width, exists := person["width"]
+	// if !exists {
+	// 	log.Fatalf("Width not found\n")
+	// }
+	// log.Printf("Width: %v\n", width)
+	// log.Printf("Person: %+v\n", person)
 }
